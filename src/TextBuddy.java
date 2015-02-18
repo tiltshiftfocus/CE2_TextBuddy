@@ -30,10 +30,17 @@ import java.util.Scanner;
 public class TextBuddy {
 
     private static final int ARRAY_INDEX_OFFSET = 1;
+    private static final String MESSAGE_WELCOME = "Welcome to TextBuddy++. %1$s is ready for use.";
+    private static final String MESSAGE_SORTED = "file %1$s sorted alphabetically";
+    private static final String MESSAGE_ADDED = "added to %1$s: \"%2$s\"";
+	private static final String MESSAGE_DELETED = "deleted from %1$s: \"%2$s\"";
+	private static final String MESSAGE_EMPTY = "%1$s is empty";
+	private static final String MESSAGE_CLEARED = "all content deleted from %1$s";
 	private static final String ERROR_WRITING_FILE = "Error writing to file";
 	private static final String ERROR_READING_FILE = "Error reading file";
 	private static final String ERROR_INVALID_INDEX = "The line specified is invalid";
 	private static final String ERROR_INVALID_COMMAND = "command %1$s in invalid";
+	private static final String ERROR_SORT = "unable to sort, %1$s is empty";	
 
 	public static void main(String[] args) {	
 	    File currentFile = TextBuddy.openFile(args[0]);
@@ -67,7 +74,7 @@ public class TextBuddy {
         }else if(command.equals("exit")){
         	System.exit(0);
         }else{
-			System.out.println(showError(ERROR_INVALID_COMMAND, userCommand));
+			showToUser(String.format(ERROR_INVALID_COMMAND, userCommand));
 		}
     }
 
@@ -75,14 +82,15 @@ public class TextBuddy {
 		System.out.println(text);
     }
     
-    private static String showError(String errorObject, String userCommand){
-    	return String.format(errorObject, userCommand);
-    }
-    
     public static List<String> sort(File currentFile) {
-    	List<String> sortedLines = sortFile(currentFile);
+    	List<String> sortedLines = null;
     	
-    	System.out.println("file " + currentFile.getName() + " sorted alphabetically");
+    	if(!isFileEmpty(currentFile)){
+    		sortedLines = sortFile(currentFile);
+	    	showToUser(String.format(MESSAGE_SORTED, currentFile.getName()));
+    	}else{
+    		showToUser(String.format(ERROR_SORT, currentFile.getName()));
+    	}
     	
 		return sortedLines;
 	}
@@ -101,7 +109,7 @@ public class TextBuddy {
 			Collections.sort(linesToSort, new SortIgnoreCase());
 			
     	}catch(IOException e){
-    		System.out.println(ERROR_READING_FILE);
+    		showToUser(ERROR_READING_FILE);
     	}
     	
     	clearFile(currentFile);
@@ -136,11 +144,11 @@ public class TextBuddy {
 			// and adding Strings back to currentFile
 			iterateAdd(linesOfStringFromFile, currentFile);
 			
-			System.out.println("deleted from " + currentFile.getName()
-					+ ": \"" + deletedString + "\"");
+			showToUser(String.format(MESSAGE_DELETED, currentFile.getName(), deletedString));
+			
 			return true;
 		}else{
-			System.out.println(ERROR_INVALID_INDEX);
+			showToUser(ERROR_INVALID_INDEX);
 		}
 		
 		return false;
@@ -157,13 +165,13 @@ public class TextBuddy {
 				linesOfStringFromFile.add(line);
 			}
 		}catch(IOException e){
-			System.out.println(ERROR_READING_FILE);
+			showToUser(ERROR_READING_FILE);
 		}
 	}
 	
 	public static boolean clear(File currentFile) {
 		if(clearFile(currentFile)){
-			System.out.println("all content deleted from " + currentFile.getName());
+			showToUser(String.format(MESSAGE_CLEARED, currentFile.getName()));
 			return true;
 		}else{
 			return false;
@@ -181,7 +189,7 @@ public class TextBuddy {
 			return true;
 			
 		} catch (IOException e) {
-			System.out.println(ERROR_WRITING_FILE);
+			showToUser(ERROR_WRITING_FILE);
 		}
 		
 		return false;
@@ -193,7 +201,7 @@ public class TextBuddy {
 
 	private static void displayFile(File currentFile) {
 		if(isFileEmpty(currentFile)){
-			System.out.println(currentFile.getName() + " is empty");
+			showToUser(String.format(MESSAGE_EMPTY, currentFile.getName()));
 		}else{
 			try {
 				BufferedReader inputFile = new BufferedReader(new 
@@ -203,11 +211,11 @@ public class TextBuddy {
 				int stringAtLine = 0;
 				while((line = inputFile.readLine()) != null){
 					stringAtLine++;
-					System.out.println(stringAtLine + ". " + line);
+					showToUser(stringAtLine + ". " + line);
 				}
 				
 			} catch (Exception e) {
-				System.out.println(ERROR_READING_FILE);
+				showToUser(ERROR_READING_FILE);
 			}
 		}
 	}
@@ -216,9 +224,7 @@ public class TextBuddy {
 		String textToAdd = removeFirstWord(userCommand);
 		
 		if(addToFile(textToAdd, currentFile)){
-			System.out.println("added to " + currentFile.getName()
-					+ ": \"" + textToAdd + "\"");
-			
+			showToUser(String.format(MESSAGE_ADDED, currentFile.getName(), textToAdd));
 			return true;
 		}else{
 			return false;
@@ -240,7 +246,7 @@ public class TextBuddy {
 			return true;
 			
 		} catch (IOException e) {
-			System.out.println(ERROR_WRITING_FILE);
+			showToUser(ERROR_WRITING_FILE);
 		}
 		
 		return false;
@@ -263,7 +269,7 @@ public class TextBuddy {
 	}
 
     private static void showWelcomeMessage(String arg) {
-        System.out.println("Welcome to TextBuddy++. " + arg + " is ready for use.");
+        showToUser(String.format(MESSAGE_WELCOME, arg));
     }
 
     private static File openFile(String fileName) {
@@ -273,7 +279,7 @@ public class TextBuddy {
             try {
                 file.createNewFile();
             } catch (IOException e) {
-                System.out.println(ERROR_READING_FILE);
+                showToUser(ERROR_READING_FILE);
                 System.exit(0);
             }
         }

@@ -40,6 +40,7 @@ public class TextBuddyTest {
 	
 	@Test
 	public void testSort(){
+		TextBuddy.clear(file);
 		TextBuddy.add("add bbb", file);
 		TextBuddy.add("add aaa", file);
 		TextBuddy.add("add dDd", file);
