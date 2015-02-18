@@ -347,7 +347,7 @@ public class TextBuddy {
         showToUser(String.format(MESSAGE_WELCOME, arg));
     }
 
-    private static File openFile(String fileName) {
+    public static File openFile(String fileName) {
         File file = new File(fileName);
 
         if(!file.exists()){

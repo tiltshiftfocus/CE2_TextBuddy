@@ -17,7 +17,7 @@ import org.junit.Test;
 
 public class TextBuddyTest {
 	
-	private static final File file = new File("mytextfile.txt");
+	private static final File file = TextBuddy.openFile("mytextfile.txt");
 	
 	// test add method
 	@Test
