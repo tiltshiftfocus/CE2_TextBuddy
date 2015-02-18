@@ -76,6 +76,19 @@ public class TextBuddyTest {
 		assertEquals("[aaa, bbb, CCC, dDd]", list.toString());
 	}
 	
+	@Test
+	public void testSort2(){
+		TextBuddy.clear(file);
+		TextBuddy.add("add hello world", file);
+		TextBuddy.add("add hello", file);
+		TextBuddy.add("add testing CS2103", file);
+		TextBuddy.add("add JUnit", file);
+		
+		List<String> list = TextBuddy.sort(file);
+		
+		assertEquals("[hello world, hello, JUnit, testing CS2103]", list.toString());
+	}
+	
 	// test sort when file is empty
 	@Test
 	public void testSortWhenEmpty(){
