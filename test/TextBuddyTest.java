@@ -28,7 +28,12 @@ public class TextBuddyTest {
 	// test clear method
 	@Test
 	public void testClear(){
-		assertTrue(TextBuddy.clear(file));
+		// clear file
+		TextBuddy.clear(file);
+		
+		// check if file is actually empty
+		assertTrue(TextBuddy.isFileEmpty(file));
+		
 	}
 	
 	// test delete method
