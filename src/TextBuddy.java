@@ -181,8 +181,7 @@ public class TextBuddy {
     	
     	// check for empty file and/or missing index input
 		if(!isFileEmpty(currentFile) && !textLineToRemove.isEmpty()){
-			boolean deleted = deleteFromFile(textLineToRemove, currentFile);
-			return deleted;
+			return deleteFromFile(textLineToRemove, currentFile);
 		}else if(!isFileEmpty(currentFile) && textLineToRemove.isEmpty()){
 			showToUser("usage: delete <number>");
 		}else if(isFileEmpty(currentFile)){
