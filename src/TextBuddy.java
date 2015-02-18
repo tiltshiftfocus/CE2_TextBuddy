@@ -18,10 +18,10 @@
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,14 +35,12 @@ public class TextBuddy {
 	private static final String ERROR_INVALID_INDEX = "The line specified is invalid";
 	private static final String ERROR_INVALID_COMMAND = "command %1$s in invalid";
 
-	public static void main(String[] args) {
-		TextBuddy tb = new TextBuddy();
-		
-	    File currentFile = tb.openFile(args[0]);
+	public static void main(String[] args) {	
+	    File currentFile = TextBuddy.openFile(args[0]);
         Scanner sc = new Scanner(System.in);
 
-        tb.showWelcomeMessage(args[0]);
-		tb.runProgramTillExit(sc,currentFile);
+        TextBuddy.showWelcomeMessage(args[0]);
+		TextBuddy.runProgramTillExit(sc,currentFile);
     }
 
 	private static void runProgramTillExit(Scanner sc, File currentFile){
@@ -81,14 +79,37 @@ public class TextBuddy {
     	return String.format(errorObject, userCommand);
     }
     
-    public static boolean sort(File currentFile) {
-		return false;
+    public static List<String> sort(File currentFile) {
+    	List<String> sortedLines = sortFile(currentFile);
+    	
+    	System.out.println("file " + currentFile.getName() + " sorted alphabetically");
+    	
+		return sortedLines;
 	}
     
-    private static boolean sortFile(File currentFile){
-    	return false;
+    private static List<String> sortFile(File currentFile){
+    	List<String> linesToSort = new LinkedList<String>();
+    	
+    	try{
+	    	BufferedReader inputFile = new BufferedReader(new 
+					FileReader(currentFile.getName()));
+	    	
+	    	String line;
+			while((line = inputFile.readLine()) != null){
+				linesToSort.add(line);
+			}
+			Collections.sort(linesToSort, new SortIgnoreCase());
+			
+    	}catch(IOException e){
+    		System.out.println(ERROR_READING_FILE);
+    	}
+    	
+    	clearFile(currentFile);
+    	iterateAdd(linesToSort, currentFile);
+    	
+    	return linesToSort;
     }
-    
+ 
     public static boolean delete(String userCommand, File currentFile){
     	String textLineToRemove = removeFirstWord(userCommand);
     	if(deleteFromFile(textLineToRemove, currentFile)){
@@ -113,11 +134,7 @@ public class TextBuddy {
 			
 			// using Iterator to loop LinkedList 
 			// and adding Strings back to currentFile
-			Iterator<String> listIterator = linesOfStringFromFile.iterator(); 
-			while(listIterator.hasNext()){
-				String textToAdd = listIterator.next();
-				addToFile(textToAdd, currentFile);
-			}
+			iterateAdd(linesOfStringFromFile, currentFile);
 			
 			System.out.println("deleted from " + currentFile.getName()
 					+ ": \"" + deletedString + "\"");
@@ -235,10 +252,18 @@ public class TextBuddy {
 	
 	private static boolean isValidIndex(int i, int size){
 		return (i>=0 && i<size);
+	}
+	
+	private static void iterateAdd(List<String> linesOfText, File currentFile) {
+		Iterator<String> listIterator = linesOfText.iterator();
+		while(listIterator.hasNext()){
+			String textToAdd = listIterator.next();
+			addToFile(textToAdd, currentFile);
 		}
+	}
 
     private static void showWelcomeMessage(String arg) {
-        System.out.println("Welcome to TextBuddy. " + arg + " is ready for use.");
+        System.out.println("Welcome to TextBuddy++. " + arg + " is ready for use.");
     }
 
     private static File openFile(String fileName) {

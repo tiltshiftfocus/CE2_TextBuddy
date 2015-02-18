@@ -1,6 +1,14 @@
+/* TextBuddy++ CE2 by Lim Zhen Ming
+ * A0111830X
+ * 
+ * JUnit Tests
+ * 
+ * */
+
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -26,7 +34,20 @@ public class TextBuddyTest {
 	
 	@Test
 	public void testDeleteWhenEmpty(){
+		TextBuddy.clear(file);
 		assertEquals(false, TextBuddy.delete("delete 1", file));
+	}
+	
+	@Test
+	public void testSort(){
+		TextBuddy.add("add bbb", file);
+		TextBuddy.add("add aaa", file);
+		TextBuddy.add("add dDd", file);
+		TextBuddy.add("add CCC", file);
+		
+		List<String> list = TextBuddy.sort(file);
+		
+		assertEquals("[aaa, bbb, CCC, dDd]", list.toString());
 	}
 
 }
