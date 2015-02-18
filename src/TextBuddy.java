@@ -120,6 +120,7 @@ public class TextBuddy {
 			}
 			inputFile.close();
 			
+			// check if matching keyword has been found
 			if(!filteredList.isEmpty()){
 				iterateAndDisplay(filteredList, currentFile);
 			}else{
@@ -297,6 +298,7 @@ public class TextBuddy {
 		return currentFile.length()<=0;
 	}
 	
+	// method to check if delete index is valid
 	private static boolean isValidIndex(int i, int size){
 		return (i>=0 && i<size);
 	}

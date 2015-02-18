@@ -98,6 +98,19 @@ public class TextBuddyTest {
 		assertEquals("[bbb]", filteredList.toString());
 	}
 	
+	@Test
+	public void testSearch2(){
+		TextBuddy.clear(file);
+		TextBuddy.add("add hello world", file);
+		TextBuddy.add("add CS2103", file);
+		TextBuddy.add("add TextBuddy", file);
+		TextBuddy.add("add SLAP", file);
+		
+		List<String> filteredList = TextBuddy.search("search Text", file);
+		
+		assertEquals("[TextBuddy]", filteredList.toString());
+	}
+	
 	// test search when keyword not found
 	@Test
 	public void testSearchNotFound(){
