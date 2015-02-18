@@ -88,7 +88,7 @@ public class TextBuddy {
 		System.out.println(text);
     }
 	
-	// search callee method
+	// search caller method
 	public static List<String> search(String userCommand, File currentFile) {
 		List<String> filteredList = null;
 		String keyword = removeFirstWord(userCommand);
@@ -136,7 +136,7 @@ public class TextBuddy {
 		return filteredList;
 	}
     
-	// sort callee method
+	// sort caller method
     public static List<String> sort(File currentFile) {
     	List<String> sortedLines = null;
     	
@@ -175,7 +175,7 @@ public class TextBuddy {
     	return linesToSort;
     }
  
-    // delete callee method
+    // delete caller method
     public static boolean delete(String userCommand, File currentFile){
     	String textLineToRemove = removeFirstWord(userCommand);
     	if(deleteFromFile(textLineToRemove, currentFile)){
@@ -214,7 +214,7 @@ public class TextBuddy {
 
 	}
 	
-	// clear callee method
+	// clear caller method
 	public static boolean clear(File currentFile) {
 		if(clearFile(currentFile)){
 			showToUser(String.format(MESSAGE_CLEARED, currentFile.getName()));
@@ -242,7 +242,7 @@ public class TextBuddy {
 		return false;
 	}
 	
-	// display callee method
+	// display caller method
 	public static void display(File currentFile){
 		displayFile(currentFile);
 	}
@@ -262,7 +262,7 @@ public class TextBuddy {
 		}
 	}
 	
-	// add callee method
+	// add caller method
 	public static boolean add(String userCommand, File currentFile) {
 		String textToAdd = removeFirstWord(userCommand);
 		
