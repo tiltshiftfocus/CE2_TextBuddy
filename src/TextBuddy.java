@@ -40,7 +40,7 @@ public class TextBuddy {
 	private static final String ERROR_WRITING_FILE = "Error writing to file";
 	private static final String ERROR_READING_FILE = "Error reading file";
 	private static final String ERROR_INVALID_INDEX = "The line specified is invalid";
-	private static final String ERROR_INVALID_COMMAND = "command %1$s in invalid";
+	private static final String ERROR_INVALID_COMMAND = "command %1$s is invalid";
 	private static final String ERROR_DELETE = "unable to delete, %1$s is empty";
 	private static final String ERROR_SORT = "unable to sort, %1$s is empty";
 	private static final String ERROR_SEARCH = "nothing to search, %1$s is empty";
