@@ -6,6 +6,9 @@
  * */
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 
 import java.io.File;
 import java.util.List;
@@ -18,24 +21,24 @@ public class TextBuddyTest {
 	
 	@Test
 	public void testAdd(){
-		assertEquals(true,TextBuddy.add("add text", file));
+		assertTrue(TextBuddy.add("add text", file));
 	}
 	
 	@Test
 	public void testClear(){
-		assertEquals(true,TextBuddy.clear(file));
+		assertTrue(TextBuddy.clear(file));
 	}
 	
 	@Test
 	public void testDelete(){
 		TextBuddy.add("add hundreds of ways", file);
-		assertEquals(true,TextBuddy.delete("delete 1", file));
+		assertTrue(TextBuddy.delete("delete 1", file));
 	}
 	
 	@Test
 	public void testDeleteWhenEmpty(){
 		TextBuddy.clear(file);
-		assertEquals(false, TextBuddy.delete("delete 1", file));
+		assertFalse(TextBuddy.delete("delete 1", file));
 	}
 	
 	@Test
@@ -49,6 +52,13 @@ public class TextBuddyTest {
 		List<String> list = TextBuddy.sort(file);
 		
 		assertEquals("[aaa, bbb, CCC, dDd]", list.toString());
+	}
+	
+	@Test
+	public void testSortWhenEmpty(){
+		TextBuddy.clear(file);
+		
+		assertNull(TextBuddy.sort(file));
 	}
 
 }
