@@ -2,6 +2,7 @@
  * A0111830X
  * 
  * This is CS2103 Assignment CE2, which is a simple text file editor.
+ * CE2 contains sort and search functions.
  * 
  * This program is assumed to be run and input by the user from the keyboard.
  * The program can also be run from a text file which consists of commands 
@@ -40,7 +41,9 @@ public class TextBuddy {
 	private static final String ERROR_READING_FILE = "Error reading file";
 	private static final String ERROR_INVALID_INDEX = "The line specified is invalid";
 	private static final String ERROR_INVALID_COMMAND = "command %1$s in invalid";
-	private static final String ERROR_SORT = "unable to sort, %1$s is empty";	
+	private static final String ERROR_SORT = "unable to sort, %1$s is empty";
+	private static final String ERROR_SEARCH = "nothing to search, %1$s is empty";
+	private static final String ERROR_KEYWORD_NOT_FOUND = "no matching of keyword \"%1$s\" found";
 
 	public static void main(String[] args) {	
 	    File currentFile = TextBuddy.openFile(args[0]);
@@ -71,17 +74,67 @@ public class TextBuddy {
         	delete(userCommand,currentFile);
         }else if(command.equals("sort")){
         	sort(currentFile);
+        }else if(command.equals("search")){
+        	search(userCommand, currentFile);
         }else if(command.equals("exit")){
         	System.exit(0);
         }else{
 			showToUser(String.format(ERROR_INVALID_COMMAND, userCommand));
 		}
     }
-
+    
 	private static void showToUser(String text){
 		System.out.println(text);
     }
+	
+	// search callee method
+	public static List<String> search(String userCommand, File currentFile) {
+		List<String> filteredList = null;
+		String keyword = removeFirstWord(userCommand);
+		
+		// check for empty file and/or missing keyword
+		if(!isFileEmpty(currentFile) && !keyword.isEmpty()){
+			filteredList = searchFile(keyword, currentFile);
+		}else if(!isFileEmpty(currentFile) && keyword.isEmpty()){
+			showToUser("missing keyword");
+		}else if(isFileEmpty(currentFile)){
+			showToUser(String.format(ERROR_SEARCH, currentFile.getName()));
+		}
+		
+		return filteredList;
+	}
+	
+	// actual method performing search
+	private static List<String> searchFile(String keyword, File currentFile) {
+		List<String> filteredList = new LinkedList<String>();
+		
+		try{
+			BufferedReader inputFile = new BufferedReader(new 
+					FileReader(currentFile.getName()));
+			
+			String line;
+			while((line = inputFile.readLine()) != null){
+				if(line.toLowerCase().contains(keyword.toLowerCase())){
+					filteredList.add(line);
+				}
+			}
+			inputFile.close();
+			
+			if(!filteredList.isEmpty()){
+				iterateAndDisplay(filteredList, currentFile);
+			}else{
+				showToUser(String.format(ERROR_KEYWORD_NOT_FOUND, keyword));
+				return null;
+			}
+				
+		}catch(IOException e){
+			showToUser(ERROR_READING_FILE);
+		}
+		
+		return filteredList;
+	}
     
+	// sort callee method
     public static List<String> sort(File currentFile) {
     	List<String> sortedLines = null;
     	
@@ -95,6 +148,7 @@ public class TextBuddy {
 		return sortedLines;
 	}
     
+    // actual method performing sorting
     private static List<String> sortFile(File currentFile){
     	List<String> linesToSort = new LinkedList<String>();
     	
@@ -107,17 +161,19 @@ public class TextBuddy {
 				linesToSort.add(line);
 			}
 			Collections.sort(linesToSort, new SortIgnoreCase());
+			inputFile.close();
 			
     	}catch(IOException e){
     		showToUser(ERROR_READING_FILE);
     	}
     	
     	clearFile(currentFile);
-    	iterateAdd(linesToSort, currentFile);
+    	iterateAndAdd(linesToSort, currentFile);
     	
     	return linesToSort;
     }
  
+    // delete callee method
     public static boolean delete(String userCommand, File currentFile){
     	String textLineToRemove = removeFirstWord(userCommand);
     	if(deleteFromFile(textLineToRemove, currentFile)){
@@ -126,15 +182,14 @@ public class TextBuddy {
     	return false;
     }
 
-
+    // actual method performing delete from file
 	private static boolean deleteFromFile(String textLineToRemove, File currentFile) {
 		
-		int indexOfLineToRemove = Integer.parseInt(textLineToRemove)- ARRAY_INDEX_OFFSET; 
-		List<String> linesOfStringFromFile = new LinkedList<String>();
+		int indexOfLineToRemove = Integer.parseInt(textLineToRemove) - ARRAY_INDEX_OFFSET; 
 		
 		// add all Strings from file to LinkedList, store deleted String,
 		// and removing the string, then clear current file
-		addAllStringToList(currentFile, linesOfStringFromFile);
+		List<String> linesOfStringFromFile = addAllStringToList(currentFile); 
 		
 		if(isValidIndex(indexOfLineToRemove,linesOfStringFromFile.size())){
 			String deletedString = linesOfStringFromFile.remove(indexOfLineToRemove);
@@ -142,7 +197,7 @@ public class TextBuddy {
 			
 			// using Iterator to loop LinkedList 
 			// and adding Strings back to currentFile
-			iterateAdd(linesOfStringFromFile, currentFile);
+			iterateAndAdd(linesOfStringFromFile, currentFile);
 			
 			showToUser(String.format(MESSAGE_DELETED, currentFile.getName(), deletedString));
 			
@@ -154,21 +209,8 @@ public class TextBuddy {
 		return false;
 
 	}
-
-	private static void addAllStringToList(File currentFile, List<String> linesOfStringFromFile) {
-		
-		try{
-			BufferedReader inputFile = new BufferedReader(new 
-					FileReader(currentFile.getName()));
-			String line;
-			while((line = inputFile.readLine()) != null){
-				linesOfStringFromFile.add(line);
-			}
-		}catch(IOException e){
-			showToUser(ERROR_READING_FILE);
-		}
-	}
 	
+	// clear callee method
 	public static boolean clear(File currentFile) {
 		if(clearFile(currentFile)){
 			showToUser(String.format(MESSAGE_CLEARED, currentFile.getName()));
@@ -178,7 +220,8 @@ public class TextBuddy {
 		}
 		
 	}
-
+	
+	// actual method performing clearing of file
 	private static boolean clearFile(File currentFile) {
 		try {
 			BufferedWriter outToFile = new BufferedWriter(new 
@@ -195,24 +238,19 @@ public class TextBuddy {
 		return false;
 	}
 	
+	// display callee method
 	public static void display(File currentFile){
 		displayFile(currentFile);
 	}
 
+	// actual method performing display of file
 	private static void displayFile(File currentFile) {
 		if(isFileEmpty(currentFile)){
 			showToUser(String.format(MESSAGE_EMPTY, currentFile.getName()));
 		}else{
 			try {
-				BufferedReader inputFile = new BufferedReader(new 
-						FileReader(currentFile.getName()));
-				
-				String line;
-				int stringAtLine = 0;
-				while((line = inputFile.readLine()) != null){
-					stringAtLine++;
-					showToUser(stringAtLine + ". " + line);
-				}
+				List<String> listOfStrings = addAllStringToList(currentFile);
+				iterateAndDisplay(listOfStrings, currentFile);
 				
 			} catch (Exception e) {
 				showToUser(ERROR_READING_FILE);
@@ -220,6 +258,7 @@ public class TextBuddy {
 		}
 	}
 	
+	// add callee method
 	public static boolean add(String userCommand, File currentFile) {
 		String textToAdd = removeFirstWord(userCommand);
 		
@@ -231,6 +270,7 @@ public class TextBuddy {
 		}
 	}
 
+	// actual method performing adding text to file
 	private static boolean addToFile(String textToAdd, File currentFile) {
 		
 		try {
@@ -251,7 +291,8 @@ public class TextBuddy {
 		
 		return false;
 	}
-
+	
+	// method to check if file is empty
 	public static boolean isFileEmpty(File currentFile) {
 		return currentFile.length()<=0;
 	}
@@ -260,12 +301,41 @@ public class TextBuddy {
 		return (i>=0 && i<size);
 	}
 	
-	private static void iterateAdd(List<String> linesOfText, File currentFile) {
+	// method to iterate through list and add lines to file
+	private static void iterateAndAdd(List<String> linesOfText, File currentFile) {
 		Iterator<String> listIterator = linesOfText.iterator();
 		while(listIterator.hasNext()){
 			String textToAdd = listIterator.next();
 			addToFile(textToAdd, currentFile);
 		}
+	}
+	
+	// method to iterate through list and display to user
+	private static void iterateAndDisplay(List<String> linesOfText, File currentFile){
+		Iterator<String> listIterator = linesOfText.iterator();
+		int indexOfLine = 0;
+		while(listIterator.hasNext()){
+			indexOfLine++;
+			showToUser(indexOfLine + ". " + listIterator.next());
+		}
+	}
+	
+	private static List<String> addAllStringToList(File currentFile) {
+		List<String> linesOfStringFromFile = new LinkedList<String>();
+		try{
+			BufferedReader inputFile = new BufferedReader(new 
+					FileReader(currentFile.getName()));
+			String line;
+			while((line = inputFile.readLine()) != null){
+				linesOfStringFromFile.add(line);
+			}
+			inputFile.close();
+		}catch(IOException e){
+			showToUser(ERROR_READING_FILE);
+		}
+		
+		return linesOfStringFromFile;
+		
 	}
 
     private static void showWelcomeMessage(String arg) {

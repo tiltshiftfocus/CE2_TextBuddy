@@ -19,28 +19,45 @@ public class TextBuddyTest {
 	
 	private static final File file = new File("mytextfile.txt");
 	
+	// test add method
 	@Test
 	public void testAdd(){
 		assertTrue(TextBuddy.add("add text", file));
 	}
 	
+	// test clear method
 	@Test
 	public void testClear(){
 		assertTrue(TextBuddy.clear(file));
 	}
 	
+	// test delete method
 	@Test
 	public void testDelete(){
 		TextBuddy.add("add hundreds of ways", file);
+		
 		assertTrue(TextBuddy.delete("delete 1", file));
 	}
 	
+	// test delete method when file is empty
 	@Test
 	public void testDeleteWhenEmpty(){
 		TextBuddy.clear(file);
+		
 		assertFalse(TextBuddy.delete("delete 1", file));
 	}
 	
+	// test delete when file is not empty but invalid line
+	@Test
+	public void testDeleteInvalid(){
+		TextBuddy.clear(file);
+		TextBuddy.add("add hello", file);
+		TextBuddy.add("add cs2103", file);
+		
+		assertFalse(TextBuddy.delete("delete 3", file));
+	}
+	
+	// test sort method
 	@Test
 	public void testSort(){
 		TextBuddy.clear(file);
@@ -54,11 +71,35 @@ public class TextBuddyTest {
 		assertEquals("[aaa, bbb, CCC, dDd]", list.toString());
 	}
 	
+	// test sort when file is empty
 	@Test
 	public void testSortWhenEmpty(){
 		TextBuddy.clear(file);
 		
 		assertNull(TextBuddy.sort(file));
+	}
+	
+	// test search
+	@Test
+	public void testSearch(){
+		TextBuddy.clear(file);
+		TextBuddy.add("add bbb", file);
+		TextBuddy.add("add aaa", file);
+		TextBuddy.add("add dDd", file);
+		TextBuddy.add("add CCC", file);
+		
+		List<String> filteredList = TextBuddy.search("search bbb", file);
+		
+		assertEquals("[bbb]", filteredList.toString());
+	}
+	
+	// test search when keyword not found
+	@Test
+	public void testSearchNotFound(){
+		TextBuddy.clear(file);
+		TextBuddy.add("add hello", file);
+
+		assertNull(TextBuddy.search("search bbb", file));
 	}
 
 }
