@@ -97,7 +97,7 @@ public class TextBuddy {
 		if(!isFileEmpty(currentFile) && !keyword.isEmpty()){
 			filteredList = searchFile(keyword, currentFile);
 		}else if(!isFileEmpty(currentFile) && keyword.isEmpty()){
-			showToUser("missing keyword");
+			showToUser("usage: search <keyword>");
 		}else if(isFileEmpty(currentFile)){
 			showToUser(String.format(ERROR_SEARCH, currentFile.getName()));
 		}
@@ -178,9 +178,16 @@ public class TextBuddy {
     // delete caller method
     public static boolean delete(String userCommand, File currentFile){
     	String textLineToRemove = removeFirstWord(userCommand);
-    	if(deleteFromFile(textLineToRemove, currentFile)){
-    		return true;
-    	}
+    	
+    	// check for empty file and/or missing index input
+		if(!isFileEmpty(currentFile) && !textLineToRemove.isEmpty()){
+			boolean deleted = deleteFromFile(textLineToRemove, currentFile);
+			return deleted;
+		}else if(!isFileEmpty(currentFile) && textLineToRemove.isEmpty()){
+			showToUser("usage: delete <number>");
+		}else if(isFileEmpty(currentFile)){
+			showToUser(String.format(ERROR_DELETE, currentFile.getName()));
+		}
     	return false;
     }
 
@@ -204,8 +211,6 @@ public class TextBuddy {
 			showToUser(String.format(MESSAGE_DELETED, currentFile.getName(), deletedString));
 			
 			return true;
-		}else if(isFileEmpty(currentFile)){
-			showToUser(String.format(ERROR_DELETE, currentFile.getName()));
 		}else{
 			showToUser(ERROR_INVALID_INDEX);
 		}
