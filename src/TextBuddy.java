@@ -63,20 +63,30 @@ public class TextBuddy {
         }else if(command.equals("clear")){
         	clear(currentFile);
         }else if(command.equals("delete")){
-        	deleteFromFile(userCommand,currentFile);
+        	delete(userCommand,currentFile);
+        }else if(command.equals("sort")){
+        	sort(currentFile);
         }else if(command.equals("exit")){
         	System.exit(0);
         }else{
 			System.out.println(showError(ERROR_INVALID_COMMAND, userCommand));
 		}
     }
-    
-    private static void showToUser(String text){
+
+	private static void showToUser(String text){
 		System.out.println(text);
     }
     
     private static String showError(String errorObject, String userCommand){
     	return String.format(errorObject, userCommand);
+    }
+    
+    public static boolean sort(File currentFile) {
+		return false;
+	}
+    
+    private static boolean sortFile(File currentFile){
+    	return false;
     }
     
     public static boolean delete(String userCommand, File currentFile){
