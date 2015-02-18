@@ -1,7 +1,7 @@
-/* TextBuddy CE1 by Lim Zhen Ming
+/* TextBuddy++ CE2 by Lim Zhen Ming
  * A0111830X
  * 
- * This is CS2103 Assignment CE1, which is a simple text file editor.
+ * This is CS2103 Assignment CE2, which is a simple text file editor.
  * 
  * This program is assumed to be run and input by the user from the keyboard.
  * The program can also be run from a text file which consists of commands 
